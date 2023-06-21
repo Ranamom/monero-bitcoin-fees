@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 import Chart from "./components/Chart";
 import Content from "./components/Content";
 import PriceCard from "./components/PriceChart";
-import { formatFeeString } from "./utils/misc";
+import { formatFeeString, formatPrice } from "./utils/misc";
 
 // :hover {
 //   background: padding-box rgb(246, 147, 26) border-box linear-gradient(145deg, rgb(var(--light-purple)) 0%, rgb(var(--light-purple) / 0.3) 33.33%, rgb(var(--light-purple) / 0.14) 66.67%, rgb(var(--light-purple) / 0.1) 100%);
@@ -14,27 +14,30 @@ const selector =
 const SIX_HOURS = 21_600_000;
 
 export default async function Home() {
-  const response = await Promise.all([
-    fetch("https://bitinfocharts.com/monero/", {
-      next: {
-        revalidate: SIX_HOURS,
-      },
-    }).then((r) => r.text()),
-    fetch("https://bitinfocharts.com/bitcoin/", {
-      next: {
-        revalidate: SIX_HOURS,
-      },
-    }).then((r) => r.text()),
-  ]);
+  // const response = await Promise.all([
+  //   fetch("https://bitinfocharts.com/monero/", {
+  //     next: {
+  //       revalidate: SIX_HOURS,
+  //     },
+  //   }).then((r) => r.text()),
+  //   fetch("https://bitinfocharts.com/bitcoin/", {
+  //     next: {
+  //       revalidate: SIX_HOURS,
+  //     },
+  //   }).then((r) => r.text()),
+  // ]);
 
-  const t = response.map((htmlString) => {
-    const $ = cheerio.load(htmlString);
+  // const t = response.map((htmlString) => {
+  //   const $ = cheerio.load(htmlString);
 
-    const priceString = $(selector).text();
-    return priceString;
-  });
+  //   const priceString = $(selector).text();
+  //   return priceString;
+  // });
 
-  const [xmrFee, btcFee] = t.map((fee) => formatFeeString(fee));
+  // const [xmrFee, btcFee] = t.map((fee) => formatFeeString(fee));
+
+  const response = await fetch("https://www.monero.how/transactionFees.json");
+  const { medianBtcUsd: btcFee, medianXmrUsd: xmrFee } = await response.json();
 
   return (
     <main className="relative min-h-screen flex flex-col justify-center">
@@ -42,8 +45,8 @@ export default async function Home() {
 
       <div className="my-48">
         <div className=" flex items-center justify-center flex-wrap gap-10">
-          <PriceCard fee={xmrFee} coin="monero" />
-          <PriceCard fee={btcFee} coin="bitcoin" />
+          <PriceCard fee={formatPrice(xmrFee)} coin="monero" />
+          <PriceCard fee={formatPrice(btcFee)} coin="bitcoin" />
         </div>
       </div>
       <div>
