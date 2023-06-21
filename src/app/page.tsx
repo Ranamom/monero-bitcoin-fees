@@ -36,7 +36,11 @@ export default async function Home() {
 
   // const [xmrFee, btcFee] = t.map((fee) => formatFeeString(fee));
 
-  const response = await fetch("https://www.monero.how/transactionFees.json");
+  const response = await fetch("https://www.monero.how/transactionFees.json", {
+    next: {
+      revalidate: SIX_HOURS,
+    },
+  });
   const { medianBtcUsd: btcFee, medianXmrUsd: xmrFee } = await response.json();
 
   return (
