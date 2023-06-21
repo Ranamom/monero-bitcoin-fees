@@ -24,7 +24,7 @@ export default function Footer() {
         <a
           className="block  underline underline-offset-2 hover:text-astro-gray-200"
           target="_blank"
-          href="https://github.com/lmssiehdev/"
+          href="https://github.com/lmssiehdev/monero-bitcoin-fees"
         >
           source code ↗︎
         </a>
